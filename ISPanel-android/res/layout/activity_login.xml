@@ -1,0 +1,82 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity" >
+
+    <Button
+        android:id="@+id/LogIn_button"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="41dp"
+        android:text="@string/LogIn_button" />
+
+    <EditText
+        android:id="@+id/LogIn_editText_password"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/LogIn_editText_username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="22dp"
+        android:ems="10"
+        android:hint="@string/LogIn_hint_password"
+        android:inputType="textPassword"
+        android:singleLine="true" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/LogIn_editText_username"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:ems="10"
+        android:hint="@string/LogIn_hint_username"
+        android:inputType="textPersonName"
+        android:singleLine="true" >
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/LogIn_editText_serverAddress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/LogIn_editText_username"
+        android:layout_alignLeft="@+id/LogIn_editText_username"
+        android:layout_alignRight="@+id/LogIn_title"
+        android:layout_marginBottom="40dp"
+        android:ems="10"
+        android:hint="@string/LogIn_hint_serverAddress"
+        android:inputType="textPersonName" >
+
+        <requestFocus />
+        <requestFocus />
+
+    </EditText>
+
+    <EditText
+        android:id="@+id/LogIn_editText_serverPort"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/LogIn_editText_serverAddress"
+        android:layout_alignBottom="@+id/LogIn_editText_serverAddress"
+        android:layout_alignRight="@+id/LogIn_editText_password"
+        android:layout_toRightOf="@+id/LogIn_title"
+        android:ems="10"
+        android:hint="@string/LogIn_hint_port"
+        android:maxLength="5"
+        android:inputType="numberDecimal" />
+
+    <TextView
+        android:id="@+id/LogIn_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="31dp"
+        android:text="@string/LogIn_title"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+</RelativeLayout>
