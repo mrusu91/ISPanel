@@ -1,6 +1,5 @@
 package com.vrx.ispanel;
 
-
 public class ConnThread implements Runnable {
 
 	Server server = new Server();

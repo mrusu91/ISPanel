@@ -10,7 +10,6 @@ import java.net.UnknownHostException;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-
 public class SysInfo implements Serializable{
 
 	private static final long serialVersionUID = 221L;
