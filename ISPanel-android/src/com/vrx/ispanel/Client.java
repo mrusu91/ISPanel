@@ -9,8 +9,8 @@ import java.net.UnknownHostException;
 
 public class Client {
 	
-	private String serveraddress = "192.168.0.101";
-	private int serverport = 7777;
+	private String serveraddress;
+	private int serverport;
 	private Socket socket = null;
 	private ObjectOutputStream oos = null;
 	private ObjectInputStream ois = null;
@@ -19,30 +19,27 @@ public class Client {
 		serveraddress = s;
 		serverport = p;
 	}
-	
+
 	public void start() throws UnknownHostException, IOException{
 		socket = new Socket(serveraddress, serverport);
 		oos = new ObjectOutputStream(socket.getOutputStream());
 		ois =new ObjectInputStream(socket.getInputStream());
 	 }
-	
-	public void writeString(String s) throws IOException{
-			oos.writeObject(s);
-			oos.flush();
-	}
-	
-	public String readString() throws OptionalDataException, ClassNotFoundException, IOException{
-				return (String)ois.readObject();
-	}
-	
-	public SysInfo readSysInfo() throws OptionalDataException, ClassNotFoundException, IOException{
-		return (SysInfo) ois.readObject();
-	}
-	
 	public void close() throws IOException{
 		oos.close();
 		ois.close();
 		socket.close();
+	}
+	
+	public void writeString(String s) throws IOException{
+		oos.writeObject(s);
+		oos.flush();
+	}
+	public String readString() throws OptionalDataException, ClassNotFoundException, IOException{
+		return (String)ois.readObject();
+	}
+	public SysInfo readSysInfo() throws OptionalDataException, ClassNotFoundException, IOException{
+		return (SysInfo) ois.readObject();
 	}
 }
 

@@ -33,7 +33,7 @@ public class SysInfo implements Serializable{
 			hn = java.net.InetAddress.getLocalHost().getHostName();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing hostname \n" +e);
 		}
 		return hn;
 	}
@@ -60,9 +60,9 @@ public class SysInfo implements Serializable{
 			shellInputStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing CPU \n" +e);
 		}
-		return temp = temp.substring(temp.indexOf(":") + 2, temp.length()-1);
+		return temp = temp.substring(temp.indexOf(":") + 2, temp.length());
 	}
 	
 // update server time method
@@ -77,7 +77,7 @@ public class SysInfo implements Serializable{
 			shellInputStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing server time \n" +e);
 		}
 		return temp;
 	}
@@ -90,7 +90,8 @@ public class SysInfo implements Serializable{
 			temp = temp.substring(0, temp.indexOf("."));
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing uptime \n" +e);
+			return null;
 		}
 		long secs = Long.parseLong(temp);
 		
@@ -130,7 +131,8 @@ public class SysInfo implements Serializable{
 			shellInputStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing memory info \n" +e);
+			return null;
 		}
 		temp[0] = temp[0].replaceAll("\\D*", "");
 		temp[1] = temp[1].replaceAll("\\D*", "");
@@ -149,7 +151,8 @@ public class SysInfo implements Serializable{
 			shellInputStream.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Error updateing load average \n" +e);
+			return null;
 		}
 		return temp.substring(temp.length()-16, temp.length());
 	}
