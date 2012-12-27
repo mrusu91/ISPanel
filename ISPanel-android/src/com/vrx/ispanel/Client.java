@@ -41,6 +41,9 @@ public class Client {
 	public SysInfo readSysInfo() throws OptionalDataException, ClassNotFoundException, IOException{
 		return (SysInfo) ois.readObject();
 	}
+	public SysClients readSysClients() throws OptionalDataException, ClassNotFoundException, IOException{
+		return (SysClients) ois.readObject();
+	}
 }
 
 

@@ -1,7 +1,5 @@
 package com.vrx.ispanel;
 
-import java.io.IOException;
-import java.io.OptionalDataException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -9,7 +7,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
-import android.widget.Toast;
 
 public class SysInfoActivity extends Activity{
 	
@@ -20,8 +17,7 @@ public class SysInfoActivity extends Activity{
 		ArrayList<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 		HashMap<String,String> item;
 		
-		SysInfo sysinfo = getSysInfo();
-		
+		SysInfo sysinfo = ((ISPanel)getApplicationContext()).sysinfo;
 		
 		String[] sysinfo_data = {sysinfo.getHostname(), sysinfo.getOS(), sysinfo.getCpu(), sysinfo.getLoadAverage(),
 				sysinfo.getMemTotal(), sysinfo.getMemFree(), sysinfo.getUptime(), sysinfo.getServerTime()};
@@ -43,23 +39,4 @@ public class SysInfoActivity extends Activity{
         listview.setAdapter(adapter);
 	}
 	
-	// Get sysinfo method
-		private SysInfo getSysInfo(){
-			try {
-				SysInfo Tempsysinfo = ((ISPanel)getApplicationContext()).client.readSysInfo();
-				//Toast.makeText(this, "GOT IT!!!", Toast.LENGTH_LONG).show();
-				return Tempsysinfo;
-			} catch (OptionalDataException e) {
-				// TODO Auto-generated catch block
-				Toast.makeText(this, "Not an object!", Toast.LENGTH_SHORT).show();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				Toast.makeText(this, "Class not found", Toast.LENGTH_SHORT).show();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				Toast.makeText(this, "I/O Exception", Toast.LENGTH_SHORT).show();
-			}	
-			return null;
-		}
-
 }

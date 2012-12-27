@@ -7,4 +7,7 @@ import android.app.Application;
 
 public class ISPanel extends Application{
 	Client client;
+	
+	SysInfo sysinfo;
+	SysClients sysclients;
 }

@@ -198,4 +198,15 @@ public class SysInfo implements Serializable{
 		return loadAverage;
 	}
 // ------------------------------
+
+	public void show() {
+		  System.out.println("Hostname: "+ getHostname());
+		  System.out.println("OS: "+ getOS());
+		  System.out.println("CPU: "+ getCpu());
+		  System.out.println("Load average: " + getLoadAverage());
+		  System.out.println("Total Memory (KB) : " + getMemTotal());
+		  System.out.println("Free Memory (KB) : " + getMemFree());
+		  System.out.println("Uptime: " + getUptime());
+		  System.out.println("Time on server: " + getServerTime());		
+	}
 }

@@ -54,10 +54,10 @@ public class LoginActivity extends Activity implements OnClickListener{
 			return true;
 		}catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			Toast.makeText(this, "Cannot connect to server!", Toast.LENGTH_SHORT).show();
+			Toast.makeText(this, "Server not found!", Toast.LENGTH_SHORT).show();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			Toast.makeText(this, "PROBLEM!", Toast.LENGTH_SHORT).show();			
+			Toast.makeText(this, "Cannot connect to server!", Toast.LENGTH_SHORT).show();			
 		}
 		return false;
 	}
@@ -68,7 +68,7 @@ public class LoginActivity extends Activity implements OnClickListener{
 			Toast.makeText(this, "Please enter a vald server address!", Toast.LENGTH_SHORT).show();
 			return false;
 		}
-		if(mServerPort.getText().length() == 0){
+		if(mServerPort.getText().length() == 0 || Integer.parseInt(mServerPort.getText().toString()) > 65534){
 			Toast.makeText(this, "Please enter a vald server port!", Toast.LENGTH_SHORT).show();
 			return false;
 		}
@@ -140,13 +140,58 @@ public class LoginActivity extends Activity implements OnClickListener{
 		if(connected)
 			authorized = authorize();	
 		if(authorized){
-			showSysInfo();
+			getSysObjects();
+			showPanel();
 		}
 	}
 	
 	
-// show Sysinfo on the phone method   BAD WAY
-	private void showSysInfo(){
+// Get the SysObjects
+	private void getSysObjects(){
+		((ISPanel)getApplicationContext()).sysinfo = getSysInfo();
+		((ISPanel)getApplicationContext()).sysclients = getSysClients();
+	}
+
+	// Get sysClients method
+	private SysClients getSysClients(){
+		try {
+			SysClients Tempsysclients = ((ISPanel)getApplicationContext()).client.readSysClients();
+			//Toast.makeText(this, "GOT IT!!!", Toast.LENGTH_LONG).show();
+			return Tempsysclients;
+		} catch (OptionalDataException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "Not an object!", Toast.LENGTH_SHORT).show();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "Class not found SysClients", Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "I/O Exception", Toast.LENGTH_SHORT).show();
+		}	
+		return null;
+	}
+
+	// Get sysinfo method
+	private SysInfo getSysInfo(){
+		try {
+			SysInfo Tempsysinfo = ((ISPanel)getApplicationContext()).client.readSysInfo();
+			//Toast.makeText(this, "GOT IT!!!", Toast.LENGTH_LONG).show();
+			return Tempsysinfo;
+		} catch (OptionalDataException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "Not an object!", Toast.LENGTH_SHORT).show();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "Class not found", Toast.LENGTH_SHORT).show();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			Toast.makeText(this, "I/O Exception", Toast.LENGTH_SHORT).show();
+		}	
+		return null;
+	}
+
+// show Panel with all infos
+	private void showPanel(){
 		intent = new Intent(this, PanelActivity.class);
 		startActivity(intent);
 	}

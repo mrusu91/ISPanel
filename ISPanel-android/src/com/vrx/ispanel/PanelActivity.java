@@ -30,6 +30,14 @@ public class PanelActivity extends TabActivity{
 				.setIndicator("System Information");
 		
 		mTabHost.addTab(spec);
+		
+		// Clients tab
+		intent = new Intent(this, SysClientsActivity.class);
+		spec = mTabHost.newTabSpec("sysclients")
+				.setContent(intent)
+				.setIndicator("Clients");
+		
+		mTabHost.addTab(spec);
 		//mTabHost.setCurrentTab(0);
 	}
 }

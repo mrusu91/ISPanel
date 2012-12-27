@@ -20,13 +20,18 @@ public final class R {
         public static final int LogIn_editText_serverPort=0x7f070005;
         public static final int LogIn_editText_username=0x7f070002;
         public static final int LogIn_title=0x7f070004;
-        public static final int SysInfo_listView=0x7f070006;
-        public static final int menu_settings=0x7f070007;
+        public static final int SysClients_listView=0x7f070006;
+        public static final int SysInfo_listView=0x7f070009;
+        public static final int menu_settings=0x7f07000a;
+        public static final int sysclients_item_img=0x7f070007;
+        public static final int sysclients_item_text1=0x7f070008;
     }
     public static final class layout {
         public static final int activity_login=0x7f030000;
         public static final int activity_panel_main=0x7f030001;
-        public static final int activity_sysinfo=0x7f030002;
+        public static final int activity_sysclients=0x7f030002;
+        public static final int activity_sysclients_item=0x7f030003;
+        public static final int activity_sysinfo=0x7f030004;
     }
     public static final class menu {
         public static final int activity_login=0x7f060000;

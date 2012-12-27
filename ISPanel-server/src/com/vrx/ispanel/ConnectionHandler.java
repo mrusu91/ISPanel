@@ -30,7 +30,7 @@ public class ConnectionHandler implements Runnable{
 			
 		authorize();
 		if(authorized)
-			sendSysInfo();
+			sendData();
 		closeConnection();
 	}
 	
@@ -67,6 +67,15 @@ public class ConnectionHandler implements Runnable{
 			System.out.println("Error writting SysInfo to socket \n" +e);
 		}
 	}
+	public void writeSysClients(SysClients sysclients){
+		try {
+			oos.writeObject(sysclients);
+			oos.flush();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error writting SysClients to socket \n" +e);
+		}
+	}
 	
 	public String readString(){
 		try {
@@ -95,10 +104,14 @@ public class ConnectionHandler implements Runnable{
 			System.out.println("Authentification failed for username: "+tempUser + " and password: " +tempPass);
 		}
 	}
-	private void sendSysInfo(){
-		SysInfo sysinfo = new SysInfo();
-		sysinfo.update();
+	private void sendData(){
+		SysInfo sysinfo = ISPanelMain.sysobjupdater.sysinfo;
 		writeSysInfo(sysinfo);
 		System.out.println("System information sent!");
+		
+		SysClients sysclients = ISPanelMain.sysobjupdater.sysclients;
+		writeSysClients(sysclients);
+		System.out.println("Clients list sent!");
 	}
+	
 }

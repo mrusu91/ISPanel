@@ -36,7 +36,6 @@
         android:hint="@string/LogIn_hint_username"
         android:inputType="textPersonName"
         android:singleLine="true" >
-
     </EditText>
 
     <EditText
@@ -49,11 +48,7 @@
         android:layout_marginBottom="40dp"
         android:ems="10"
         android:hint="@string/LogIn_hint_serverAddress"
-        android:inputType="textPersonName" >
-
-        <requestFocus />
-        <requestFocus />
-
+        android:inputType="textPersonName" >        <requestFocus />
     </EditText>
 
     <EditText
