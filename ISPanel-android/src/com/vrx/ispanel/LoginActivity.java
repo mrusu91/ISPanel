@@ -5,203 +5,230 @@ import java.io.OptionalDataException;
 import java.net.UnknownHostException;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class LoginActivity extends Activity implements OnClickListener{
+public class LoginActivity extends Activity implements OnClickListener {
 
-	private boolean connected = false;
-	private boolean authorized = false;
-	private boolean correctFields = false;
-	
-	String username, password, serverAddress;
-	int serverPort;
-	
-	EditText mUsername, mPassword, mServerAddress, mServerPort;
-	Button mLogIn;
-	
-	Intent intent;
-	
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		
-	     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-	    	StrictMode.setThreadPolicy(policy);
-	    	
-		setContentView(R.layout.activity_login);
-		
-		mServerAddress = (EditText)findViewById(R.id.LogIn_editText_serverAddress);
-		mServerPort = (EditText)findViewById(R.id.LogIn_editText_serverPort);
-		mUsername = (EditText) findViewById(R.id.LogIn_editText_username);
-		mPassword = (EditText) findViewById(R.id.LogIn_editText_password);
-		mLogIn = (Button) findViewById(R.id.LogIn_button);
-		mLogIn.setOnClickListener(this);
-	}
+ private boolean correctFields = false;
+ int serverPort;
+ String username, password, serverAddress;
+ EditText mUsername, mPassword, mServerAddress, mServerPort;
+ Button mLogIn;
+ Intent intent;
 
-// Connect to server method
-	private boolean ConnectToServer(){		
-		((ISPanel)getApplicationContext()).client = new Client(serverAddress, serverPort);
-		try {
-			((ISPanel)getApplicationContext()).client.start();
-			return true;
-		}catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Server not found!", Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Cannot connect to server!", Toast.LENGTH_SHORT).show();			
-		}
-		return false;
-	}
-	
-//	Check fields method
-	private boolean checkFields(){
-		if(mServerAddress.getText().length() == 0){
-			Toast.makeText(this, "Please enter a vald server address!", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		if(mServerPort.getText().length() == 0 || Integer.parseInt(mServerPort.getText().toString()) > 65534){
-			Toast.makeText(this, "Please enter a vald server port!", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		if(mUsername.getText().length() == 0){
-			Toast.makeText(this, "Please enter a vald username!", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		if(mPassword.getText().length() == 0){
-			Toast.makeText(this, "Please enter a vald password!", Toast.LENGTH_SHORT).show();
-			return false;
-		}
-		serverAddress = mServerAddress.getText().toString();
-		serverPort = Integer.parseInt(mServerPort.getText().toString());
-		username = mUsername.getText().toString();
-		password = mPassword.getText().toString();
-		return true;
-	}
-	
-// Authorize user method
-	private boolean authorize(){;
-		try {
-			((ISPanel)getApplicationContext()).client.writeString(username);
-			((ISPanel)getApplicationContext()).client.writeString(password);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Please try again!", Toast.LENGTH_SHORT).show();
-			closeConnection();
-			return false;
-		}
-			
-		try {
-			String result = ((ISPanel)getApplicationContext()).client.readString();
-			Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
-			String message = "Connected!";
-			if (result.equals(message))
-				return true;	
-		} catch (OptionalDataException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "OptionalDataException", Toast.LENGTH_SHORT).show();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Class not found", Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "IO", Toast.LENGTH_SHORT).show();
-		}
-		return false;
-	}	
+ ConnectTask connectTask;
+ ProgressDialog progressDialog;
 
-// Close connection method
-	private void closeConnection(){
-		try {
-			((ISPanel)getApplicationContext()).client.close();
-		} catch (IOException e2) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "IO - cannot close socket", Toast.LENGTH_SHORT).show();
-		}
-	}
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		correctFields = false;
-		connected = false;
-		authorized = false;
-		
-		correctFields = checkFields();
-		if(correctFields)
-			connected =	ConnectToServer();
-		if(connected)
-			authorized = authorize();	
-		if(authorized){
-			getSysObjects();
-			showPanel();
-		}
-	}
-	
-	
-// Get the SysObjects
-	private void getSysObjects(){
-		((ISPanel)getApplicationContext()).sysinfo = getSysInfo();
-		((ISPanel)getApplicationContext()).sysclients = getSysClients();
-	}
+ @Override
+ protected void onCreate(Bundle savedInstanceState) {
+  super.onCreate(savedInstanceState);
+  setContentView(R.layout.activity_login); // set the layout
 
-	// Get sysClients method
-	private SysClients getSysClients(){
-		try {
-			SysClients Tempsysclients = ((ISPanel)getApplicationContext()).client.readSysClients();
-			//Toast.makeText(this, "GOT IT!!!", Toast.LENGTH_LONG).show();
-			return Tempsysclients;
-		} catch (OptionalDataException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Not an object!", Toast.LENGTH_SHORT).show();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Class not found SysClients", Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "I/O Exception", Toast.LENGTH_SHORT).show();
-		}	
-		return null;
-	}
+  mServerAddress = (EditText) findViewById(R.id.LogIn_editText_serverAddress);
+  mServerPort = (EditText) findViewById(R.id.LogIn_editText_serverPort);
+  mUsername = (EditText) findViewById(R.id.LogIn_editText_username);
+  mPassword = (EditText) findViewById(R.id.LogIn_editText_password);
+  mLogIn = (Button) findViewById(R.id.LogIn_button);
+  mLogIn.setOnClickListener(this);
+  progressDialog = new ProgressDialog(this);
+  progressDialog.setIndeterminate(true);
+ }
 
-	// Get sysinfo method
-	private SysInfo getSysInfo(){
-		try {
-			SysInfo Tempsysinfo = ((ISPanel)getApplicationContext()).client.readSysInfo();
-			//Toast.makeText(this, "GOT IT!!!", Toast.LENGTH_LONG).show();
-			return Tempsysinfo;
-		} catch (OptionalDataException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Not an object!", Toast.LENGTH_SHORT).show();
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "Class not found", Toast.LENGTH_SHORT).show();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			Toast.makeText(this, "I/O Exception", Toast.LENGTH_SHORT).show();
-		}	
-		return null;
-	}
+ // Check fields method
+ private boolean checkFields() {
+  if (mServerAddress.getText().length() == 0) {
+   Toast.makeText(this, "Please enter a vald server address!",
+     Toast.LENGTH_SHORT).show();
+   return false;
+  }
+  if (mServerPort.getText().length() == 0
+    || Integer.parseInt(mServerPort.getText().toString()) > 65534) {
+   Toast.makeText(this, "Please enter a vald server port!", Toast.LENGTH_SHORT)
+     .show();
+   return false;
+  }
+  if (mUsername.getText().length() == 0) {
+   Toast.makeText(this, "Please enter a vald username!", Toast.LENGTH_SHORT)
+     .show();
+   return false;
+  }
+  if (mPassword.getText().length() == 0) {
+   Toast.makeText(this, "Please enter a vald password!", Toast.LENGTH_SHORT)
+     .show();
+   return false;
+  }
+  serverAddress = mServerAddress.getText().toString();
+  serverPort = Integer.parseInt(mServerPort.getText().toString());
+  username = mUsername.getText().toString();
+  password = mPassword.getText().toString();
+  return true;
+ }
 
-// show Panel with all infos
-	private void showPanel(){
-		intent = new Intent(this, PanelActivity.class);
-		startActivity(intent);
-	}
-		
-// --- OPTION MENU
-/*	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.activity_login, menu);
-		return true;
-	}*/
+ // when clicking the log in button
+ @Override
+ public void onClick(View v) {
+  correctFields = false;
+  correctFields = checkFields();
+  if (correctFields) {
+   
+   // Need to use a AsyncTask to comunicate with the server in background, Not to block the UI
+   connectTask = new ConnectTask();
+   connectTask.execute(1);
+  }
+ }
 
+ // show Panel with all infos
+ private void showPanel() {
+  intent = new Intent(this, PanelActivity.class);
+  startActivity(intent);
+ }
+
+ // when back button is pressed, if pushed while connecting, dismiss the progress dialog
+ @Override
+ public void onBackPressed() {
+  super.onBackPressed();
+  if(connectTask != null){
+  connectTask.cancel(true);
+  progressDialog.dismiss();
+  }
+ }
+
+ // the asynctask inner class
+ public class ConnectTask extends AsyncTask<Integer, Integer, String> {
+  private static final String TAG = "ConnectTask";
+
+  // just show the progress dialog
+  @Override
+  protected void onPreExecute() {
+   super.onPreExecute();
+   progressDialog.setTitle(R.string.app_name);
+   progressDialog.setMessage("Connecting to server...");
+   progressDialog.show();
+  }
+
+  // change the text of progress dialog depending of stage
+  @Override
+  protected void onProgressUpdate(Integer... values) {
+   super.onProgressUpdate(values);
+   switch (values[0]) {
+   case 1:
+    progressDialog.setMessage("Authentificating...");
+    break;
+   case 2:
+    progressDialog.setMessage("Getting informations...");
+    break;
+   default:
+    break;
+   }
+  }
+
+  // after background task is executed
+  @Override
+  protected void onPostExecute(String result) {
+   super.onPostExecute(result);
+   progressDialog.dismiss();
+   if (result.contains("OK!"))
+    showPanel(); // if authentification success, and sysobject updated, show the panel with all info
+   else {
+    Toast.makeText(LoginActivity.this, result, Toast.LENGTH_SHORT).show();
+   }
+  }  
+  
+  // background task
+  @Override
+  protected String doInBackground(Integer... params) {
+   boolean connected = false;
+   boolean authorized = false;
+   String result;
+   connected = ConnectToServer(); // connect to server
+   if (connected) {
+    publishProgress(1); // change text of progress dialog
+    authorized = authorize(); // try to authorize
+   } else {
+    result = "Cannot connect to server!";
+    return result;
+   }
+
+   if (authorized) {
+    publishProgress(2); // if auth succeed, change text of progress dialog
+    updateSysObjects(); // update sys objects
+    result = "OK!"; // tell the UI to show panel
+   } else {
+    result = "Authentification failled!";
+   }
+   return result;
+  }
+
+  // Connect to server method
+  private boolean ConnectToServer() {
+   ((ISPanel) getApplicationContext()).client = new Client(serverAddress,
+     serverPort);
+   try {
+    ((ISPanel) getApplicationContext()).client.start();
+    return true;
+   } catch (UnknownHostException e) {
+    Log.e(TAG, "Unknown Host Exception: " + e.getMessage());
+   } catch (IOException e) {
+    Log.e(TAG, "IOException: " + e.getMessage());
+   }
+   return false;
+  }
+
+  // Authorize user method
+  private boolean authorize() {
+   ;
+   try {
+    ((ISPanel) getApplicationContext()).client.writeString(username);
+    ((ISPanel) getApplicationContext()).client.writeString(password);
+   } catch (IOException e) {
+    Log.e(TAG, "IOException: " + e.getMessage());
+    closeConnection();
+    return false;
+   }
+
+   try {
+    String result = ((ISPanel) getApplicationContext()).client.readString();
+    String message = "Connected!";
+    if (result.equals(message))
+     return true;
+   } catch (OptionalDataException e) {
+    Log.e(TAG, "OptionalDataException: " + e.getMessage());
+   } catch (ClassNotFoundException e) {
+    Log.e(TAG, "ClassNotFoundException: " + e.getMessage());
+   } catch (IOException e) {
+    Log.e(TAG, "IOException: " + e.getMessage());
+   }
+   return false;
+  }
+
+  // Close connection method
+  private void closeConnection() {
+   try {
+    ((ISPanel) getApplicationContext()).client.close();
+   } catch (IOException e) {
+    Log.e(TAG, "IOException: " + e.getMessage());
+   }
+  }
+  
+  private void updateSysObjects(){
+   try {
+    ((ISPanel)getApplication()).getSysObjects();
+   } catch (OptionalDataException e) {
+    Log.e(TAG, "OptionalDataException: " + e.getMessage());
+   } catch (ClassNotFoundException e) {
+    Log.e(TAG, "ClassNotFoundException: " + e.getMessage());
+   } catch (IOException e) {
+    Log.e(TAG, "IOException: " + e.getMessage());
+   }
+  }
+ }
 }
