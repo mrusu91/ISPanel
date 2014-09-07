@@ -6,7 +6,6 @@ An UNIX firewall / router manager written in Java.
 This project is composed of two apps. One is the server app which should run on server,
 and the other one is an Android app which gives you the ability to manage the server.
 
-
 This is just a microscopic chunk of a project started during TechAbility event.
 
 // Features:
@@ -15,9 +14,13 @@ This is just a microscopic chunk of a project started during TechAbility event.
    - Save logs in ISPanel.log file in app root directory
 
 To give you status of clients you should create a clients.all file that will contain a client per line
+
 Line format(\t means a TAB space):
+
 IP\tMAC\tName
+
 EX:
+
 192.168.0.100  FF:FF:FF:FF:FF:FF Barack Obama
 192.168.0.105  AA:AA:AA:AA:AA:AA George Bush
 
