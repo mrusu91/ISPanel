@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-
-    <string-array name="actionbar_menulist">
-        <item>System information</item>
-        <item>Clients list</item>
-    </string-array>
-
-</resources>
