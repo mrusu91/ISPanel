@@ -22,6 +22,7 @@ IP\tMAC\tName
 EX:
 
 192.168.0.100  FF:FF:FF:FF:FF:FF Barack Obama
+
 192.168.0.105  AA:AA:AA:AA:AA:AA George Bush
 
 // TODO: a lot :)  couple of ideas:
